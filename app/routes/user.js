@@ -15,27 +15,36 @@ const loginHandler = (request, response, next) => {
       return user
         ? request.logIn(user, function(err) {
           if (err) return next(err);
+          console.log('Successfully logined!');
           return response.redirect('/main');
         })
-        : request.redirect('/auth');
+        : response.redirect('/auth');
     }
   )(request, response, next);
 };
 
-const registerHandler = function(request, response, next) {
-  const hashedPassword = bcrypt.hashSync(request.body.password, salt);
+const registerHandler = async function(req, res, next) {
+  if (!req.body.password) {
+    res.status(400).json({ text: 'Password is Required!' });
+    return new Error('Password is Required');
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   const user = new userModel({
-    login: request.body.login,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    login: req.body.login,
     password: hashedPassword,
   });
 
   user.save(function(err) {
     if (err) return next(err);
 
-    return request.logIn(user, function(err) {
+    return req.logIn(user, function(err) {
       if (err) return next(err);
-      return response.redirect('/private');
+      console.log('Successfully registered!');
+      return res.redirect('/main');
     });
   });
 };
@@ -46,7 +55,10 @@ const logoutHandler = (req, res) => {
 };
 
 const userInfoHandler = (request, response) => {
-  if (!request.user) response.status(404).json({ text: 'Current user not found' });
+  if (!request.user) {
+    console.log('Current user not found');
+    response.status(404).json({ text: 'Current user not found' });
+  }
   response.send(request.user);
 };
 
