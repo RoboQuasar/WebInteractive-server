@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const passport = require('passport');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 
@@ -9,11 +10,13 @@ const dataBaseUrl = process.env.NODE_ENV === 'development'
   ? 'mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb'
   : 'turbo-prod url';
 
+app.use(express.cookieParser());
+
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
 
-require('./authentication');
+require('./authentication')();
 
 mongoose.connect(dataBaseUrl, function (err) {
   if (err) throw err;
@@ -39,5 +42,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+require('./routes').userRoutes(app);
 
 module.exports = app;

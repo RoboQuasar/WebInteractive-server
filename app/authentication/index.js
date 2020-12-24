@@ -4,53 +4,45 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const LocalStrategy = require('passport-local').Strategy;
 
-// Generate Password
-const saltRounds = 10;
-
-const salt = bcrypt.genSaltSync(saltRounds);
-
 passport.serializeUser(function(user, doneCallback) {
   doneCallback(null, user.login);
 });
 
-passport.deserializeUser(function (username, cb) {
-  findUser(username, cb)
+passport.deserializeUser(function (login, doneCallback) {
+  userModel.findOne({ login: login }, function(err, user) {
+    err
+      ? doneCallback(err)
+      : doneCallback(null, user);
+  });
+
 });
 
 function initPassportStrategy () {
-  passport.use(new LocalStrategy(
-    (login, password, done) => {
+  passport.use(new LocalStrategy({
+      usernameField: 'login',
+      passwordField: 'password'
+    },
+    (login, password, doneCallback) => {
       userModel.findOne({ login: login }, function (err, user) {
-        if (err) return done(err);
+        if (err) return doneCallback(err);
 
-
-      });
-
-
-      findUser(login, (err, user) => {
-        if (err) {
-          return done(err)
-        }
-
-        // User not found
         if (!user) {
-          console.log('User not found')
-          return done(null, false)
+          console.log('Login not found.');
+          return doneCallback(null, false,  { message: 'Login not found.' });
         }
 
         // Always use hashed passwords and fixed time comparison
-        bcrypt.compare(password, user.passwordHash, (err, isValid) => {
-          if (err) {
-            return done(err)
-          }
-          if (!isValid) {
-            return done(null, false)
-          }
-          return done(null, user)
-        })
-      })
+        // in user.password saved hash of real password
+        bcrypt.compare(password, user.password, (err, isValid) => {
+          if (err) return doneCallback(err);
+
+          if (!isValid) return doneCallback(null, false,  { message: 'Password is incorrect.' });
+
+          return doneCallback(null, user);
+        });
+      });
     }
-  ))
+  ));
 
   passport.authenticationMiddleware = function () {
     return function (req, res, next) {
