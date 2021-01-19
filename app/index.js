@@ -9,7 +9,7 @@ const app = express();
 
 const dataBaseUrl = process.env.NODE_ENV === 'development'
   ? 'mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb'
-  : 'turbo-prod url';
+  : `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@projectcluster.bln0j.mongodb.net/mongodb?retryWrites=true&w=majority`;
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
