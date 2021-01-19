@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rimraf build && cross-env NODE_ENV=development node index.js",
+    "start": "rimraf build && cross-env NODE_ENV=production node index.js",
     "build": "rimraf build && cross-env NODE_ENV=production"
   },
   "author": "RoboQuasar",
