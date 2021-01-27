@@ -7,9 +7,7 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-const dataBaseUrl = process.env.NODE_ENV === 'development'
-  ? 'mongodb://127.0.0.1:27017/?gssapiServiceName=mongodb'
-  : `mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@projectcluster.bln0j.mongodb.net/mongodb?retryWrites=true&w=majority`;
+const dataBaseUrl = 'mongodb+srv://roboquasar:1307Ridfor1307@projectcluster.bln0j.mongodb.net/mongodb?retryWrites=true&w=majority';
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
