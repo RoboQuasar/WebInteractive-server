@@ -1,5 +1,6 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 
 const userModel = require('../models/user');
 
@@ -36,12 +37,12 @@ const registerHandler = async function(req, res, next) {
 
   const userData = await userModel.findOne({ login: req.body.login });
   if (userData && userData.login) {
-    res.status(422).json({ text: 'Этот Логин или Почта уже используется.' });
+    res.status(422).json({ login: 'Этот Логин или Почта уже используется.' });
     return new Error('Login already used!');
   }
 
   if (req.body.password !== req.body.passwordConfirm) {
-    res.status(422).json({ text: 'Пароль и подтверждение пароля должны совпадать.' });
+    res.status(422).json({ passwordConfirm: 'Пароль и подтверждение пароля должны совпадать.' });
     return new Error('Passwords are not equal');
   }
 
@@ -79,6 +80,11 @@ const userInfoHandler = (request, response) => {
 };
 
 module.exports = function (app) {
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 // For legacy browser support
+  }));
+
   app.post('/login', loginHandler);
   app.post('/register', registerHandler);
   app.post('/logout', logoutHandler);
