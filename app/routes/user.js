@@ -18,7 +18,7 @@ const loginHandler = (request, response, next) => {
           console.log('Successfully logined!');
           return response.sendStatus(200);
         })
-        : response.redirect('/auth');
+        : response.status(422).json({ text: 'Логин не найден.' });
     }
   )(request, response, next);
 };
