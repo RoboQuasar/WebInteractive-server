@@ -25,8 +25,23 @@ const loginHandler = (request, response, next) => {
 
 const registerHandler = async function(req, res, next) {
   if (!req.body.password) {
-    res.status(400).json({ text: 'Password is Required!' });
+    res.status(400).json({ text: 'Поле "Пароль" обязательно должно быть заполнено!' });
     return new Error('Password is Required');
+  }
+
+  if (!req.body.firstname) {
+    res.status(400).json({ text: 'Не заполнено поле "Имя"!' });
+    return new Error('Password is Required');
+  }
+
+  await userModel.find({ login: req.body.login }, function (err, user) {
+    if (user) res.status(422).json({ text: 'Этот Логин или Почта уже используется.' });
+  });
+
+
+  if (req.body.password !== req.body.passwordConfirm) {
+    res.status(422).json({ text: 'Пароль и подтверждение пароля должны совпадать.' });
+    return new Error('Passwords are not equal');
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -44,7 +59,7 @@ const registerHandler = async function(req, res, next) {
     return req.logIn(user, function(err) {
       if (err) return next(err);
       console.log('Successfully registered!');
-      return res.redirect('/main');
+      return res.sendStatus(200);
     });
   });
 };
