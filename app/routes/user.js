@@ -16,17 +16,33 @@ const loginHandler = (request, response, next) => {
         ? request.logIn(user, function(err) {
           if (err) return next(err);
           console.log('Successfully logined!');
-          return response.redirect('/main');
+          return response.sendStatus(200);
         })
-        : response.redirect('/auth');
+        : response.status(422).json({ text: 'Логин не найден.' });
     }
   )(request, response, next);
 };
 
 const registerHandler = async function(req, res, next) {
   if (!req.body.password) {
-    res.status(400).json({ text: 'Password is Required!' });
+    res.status(400).json({ text: 'Поле "Пароль" обязательно должно быть заполнено!' });
     return new Error('Password is Required');
+  }
+
+  if (!req.body.firstname) {
+    res.status(400).json({ text: 'Не заполнено поле "Имя"!' });
+    return new Error('Password is Required');
+  }
+
+  const userData = await userModel.findOne({ login: req.body.login });
+  if (userData && userData.login) {
+    res.status(422).json({ text: 'Этот Логин или Почта уже используется.' });
+    return new Error('Login already used!');
+  }
+
+  if (req.body.password !== req.body.passwordConfirm) {
+    res.status(422).json({ text: 'Пароль и подтверждение пароля должны совпадать.' });
+    return new Error('Passwords are not equal');
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -44,7 +60,7 @@ const registerHandler = async function(req, res, next) {
     return req.logIn(user, function(err) {
       if (err) return next(err);
       console.log('Successfully registered!');
-      return res.redirect('/main');
+      return res.status(200).send('OK');
     });
   });
 };
@@ -65,7 +81,7 @@ const userInfoHandler = (request, response) => {
 module.exports = function (app) {
   app.post('/login', loginHandler);
   app.post('/register', registerHandler);
-  app.get('/logout', logoutHandler);
+  app.post('/logout', logoutHandler);
 
   app.get('/user-info', userInfoHandler);
 };

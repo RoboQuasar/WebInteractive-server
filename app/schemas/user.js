@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: (text) => text.length >= 2,
-      message: 'firstname length must be longer then 2 symbols'
+      message: 'Имя должно быть длиннее двух символов.'
     },
     required: true
   },
@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: (text) => text.length >= 2,
-      message: 'lastname length must be longer then 2 symbols'
+      message: 'Фамилия должна быть длиннее двух символов.'
     },
   },
   avatar: Buffer,
@@ -21,13 +21,17 @@ const UserSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: (text) => text.length >= 4,
-      message: 'login length must be longer then 4 symbols'
+      message: 'Логин должен быть длиннее 4-х символов.'
     },
     unique: true,
     required: true
   },
   password: {
     type: String,
+    validate: {
+      validator: (text) => text.length >= 5,
+      message: 'Длина пароля должна быть больше 5 символов.'
+    },
     required: true
   },
 });
