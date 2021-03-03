@@ -11,6 +11,8 @@ const dataBaseUrl = 'mongodb+srv://roboquasar:1307Ridfor1307@projectcluster.bln0
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 require('./authentication')();
 
