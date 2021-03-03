@@ -13,6 +13,8 @@ const dataBaseUrl = process.env.NODE_ENV === 'development'
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 require('./authentication')();
 
