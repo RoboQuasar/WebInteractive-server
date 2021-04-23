@@ -38,6 +38,9 @@ app.use(session({
   secret: 'RoboQuasar-Secret',
   saveUninitialized: false, // don't create session until something stored
   resave: false, //don't save session if unmodified
+  cookie: {
+    sameSite: 'none',
+  },
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
 
