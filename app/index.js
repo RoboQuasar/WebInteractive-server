@@ -34,12 +34,14 @@ dataBaseConnection.once('open', function() {
 
 const MongoStore = require('connect-mongo')(session);
 
+app.set('trust proxy', 1);
+
 app.use(session({
   secret: 'RoboQuasar-Secret',
   saveUninitialized: false, // don't create session until something stored
   resave: false, //don't save session if unmodified
   cookie: {
-    sameSite: 'none',
+    secure: true,
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
