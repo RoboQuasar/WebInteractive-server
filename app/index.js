@@ -40,7 +40,7 @@ app.use(session({
   resave: false, //don't save session if unmodified
   cookie: {
     sameSite: 'none',
-    httpOnly: false,
+    secure: true,
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));
