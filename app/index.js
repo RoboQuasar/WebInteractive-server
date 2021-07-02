@@ -43,8 +43,7 @@ app.use(session({
   saveUninitialized: false, // don't create session until something stored
   resave: false, //don't save session if unmodified
   cookie: {
-    secure: true,
-    sameSite: 'none',
+    secure: false,
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection })
 }));

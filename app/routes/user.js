@@ -81,7 +81,7 @@ const userInfoHandler = (request, response) => {
 
 module.exports = function (app) {
   app.use(cors({
-    origin: 'https://atemy.github.io',
+    origin: 'http://localhost:3000',
     credentials: true,
     optionsSuccessStatus: 200 // For legacy browser support
   }));
